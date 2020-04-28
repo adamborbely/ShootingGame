@@ -49,3 +49,23 @@
     height: 35px;
     position: absolute;
 }
+
+#score{
+    color:white;
+    position: absolute;
+    width: 150px;
+    top: 50px;
+    text-align: right;
+    font-size: 20px;
+}
+
+#gameOver{
+    color:crimson;
+    position:absolute;
+    background-color:grey;
+    visibility: hidden;
+    width: 485px;
+    top: 200px;
+    text-align: center;
+    font-size: 60px;
+}

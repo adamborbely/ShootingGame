@@ -7,6 +7,9 @@ const movement = 4;
 
 let lastLoopRun = 0;
 
+let score=0;
+let roundCount=0;
+
 const controller = new Object();
 let enemies = new Array();
 
@@ -112,9 +115,13 @@ function checkCollisons(){
             enemies.splice(i, 1);
             i--;
             bulletUp.y = -bulletUp.h;
-        }else if(intersects(redcube,enemies[i])){
+            score+=50;
+        }
+        else if(intersects(redcube,enemies[i])){
             let element = document.getElementById(redcube.element);
             element.style.visibility = 'hidden';
+            element=document.getElementById("gameOver");
+            element.style.visibility = "visible";
         }
         else if(enemies[i].y + enemies[i].h >= 480){
             let element = document.getElementById(enemies[i].element);
@@ -131,6 +138,7 @@ function checkCollisons(){
             enemies.splice(i, 1);
             i--;
             bulletDown = createSprite('bulletDown', -2, -120, 2, 50);
+            score+=50;
         }
 
         else if(intersects(bulletLeft,enemies[i])){
@@ -140,6 +148,7 @@ function checkCollisons(){
             enemies.splice(i, 1);
             i--;
             bulletLeft = createSprite('bulletLeft', 60, -100, 50, 2);
+            score+=50;
         }
 
         else if(intersects(bulletRight,enemies[i])){
@@ -149,6 +158,7 @@ function checkCollisons(){
             enemies.splice(i, 1);
             i--;
             bulletRight = createSprite('bulletRight', 2, -100, 50, 2);
+            score+=50;
         }
     }
     if(bulletDown.y+bulletDown.h >=480){
@@ -178,6 +188,9 @@ function showSprites(){
     for(let i = 0; i < enemies.length; i++){
         setPosition(enemies[i]);
     }
+
+    let scoreWriting=document.getElementById("score");
+    scoreWriting.textContent="SCORE: "+score;
 }
 
 function updatePositions(){
@@ -196,16 +209,57 @@ function updatePositions(){
 }
 
 function addEnemy(){
-    if(getRandom(50) == 0){
-        let enemyName ='enemy' + getRandom(10000000);
-        let enemy = createSprite(enemyName, getRandom(450), -40, 35, 35);
-
-        let element = document.createElement('div');
-        element.id = enemyName;
-        element.className = 'enemy';
-        document.children[0].appendChild(element);
-
-        enemies[enemies.length] = enemy;
+    if(roundCount>500){
+        if(getRandom(25) == 0){
+            let enemyName ='enemy' + getRandom(10000000);
+            let enemy = createSprite(enemyName, getRandom(450), -40, 35, 35);
+    
+            let element = document.createElement('div');
+            element.id = enemyName;
+            element.className = 'enemy';
+            document.children[0].appendChild(element);
+    
+            enemies[enemies.length] = enemy;
+        }
+    }
+    else if(roundCount>1000){
+        if(getRandom(10) == 0){
+            let enemyName ='enemy' + getRandom(10000000);
+            let enemy = createSprite(enemyName, getRandom(450), -40, 35, 35);
+    
+            let element = document.createElement('div');
+            element.id = enemyName;
+            element.className = 'enemy';
+            document.children[0].appendChild(element);
+    
+            enemies[enemies.length] = enemy;
+       }
+    }
+    else if(roundCount>2000){
+        if(getRandom(2) == 0){
+            let enemyName ='enemy' + getRandom(10000000);
+            let enemy = createSprite(enemyName, getRandom(450), -40, 35, 35);
+    
+            let element = document.createElement('div');
+            element.id = enemyName;
+            element.className = 'enemy';
+            document.children[0].appendChild(element);
+    
+            enemies[enemies.length] = enemy;
+       }
+    }
+    else{
+        if(getRandom(50) == 0){
+            let enemyName ='enemy' + getRandom(10000000);
+            let enemy = createSprite(enemyName, getRandom(450), -40, 35, 35);
+    
+            let element = document.createElement('div');
+            element.id = enemyName;
+            element.className = 'enemy';
+            document.children[0].appendChild(element);
+    
+            enemies[enemies.length] = enemy;
+        }
     }
 }
 
@@ -225,6 +279,7 @@ function loop(){
 
         lastLoopRun = new Date().getTime();
     }
+    roundCount++;
     setTimeout('loop();',2);
 }
 
