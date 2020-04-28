@@ -15,10 +15,31 @@
     margin: 20px;  
 }
 
-#bullet{
+#bulletUp{
     background: green;
     width: 2px;
     height: 50px;
+    position: absolute;
+}
+
+#bulletDown{
+    background: green;
+    width: 2px;
+    height: 50px;
+    position: absolute;
+}
+
+#bulletLeft{
+    background: green;
+    width: 50px;
+    height: 2px;
+    position: absolute;
+}
+
+#bulletRight{
+    background: green;
+    width: 50px;
+    height: 2px;
     position: absolute;
 }
 

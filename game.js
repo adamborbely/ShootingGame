@@ -76,25 +76,34 @@ function handleControls(){
     if(controller.left){
         redcube.x -= movement;
     }
-    if(controller.space && bullet.y <= -120 ){
-        bullet.x = redcube.x + 9;
-        bullet.y = redcube.y - bullet.h;
+    if(controller.space && bulletUp.y <= -120 ){
+        bulletUp.x = redcube.x + 9;
+        bulletUp.y = redcube.y - bulletUp.h;
+
+        bulletDown.x = redcube.x + 9;
+        bulletDown.y = redcube.y + 20;
+
+        bulletLeft.x = redcube.x - bulletLeft.w;
+        bulletLeft.y = redcube.y + 9;
+
+        bulletRight.x = redcube.x + 20;
+        bulletRight.y = redcube.y + 9;
     }
     boundsControll(redcube);
 }
 
 function checkCollisons(){
     for(let i = 0; i < enemies.length; i++){
-        if(intersects(bullet, enemies[i])){
+        if(intersects(bulletUp, enemies[i])){
             let element = document.getElementById(enemies[i].element);
             element.style.visibility = 'hidden';
             element.parentNode.removeChild(element);
             enemies.splice(i, 1);
             i--;
-            bullet.y = -bullet.h;
+            bulletUp.y = -bulletUp.h;
         }else if(intersects(redcube,enemies[i])){
             let element = document.getElementById(redcube.element);
-            element.style.visibility = 'hidden';;
+            element.style.visibility = 'hidden';
         }
         else if(enemies[i].y + enemies[i].h >= 480){
             let element = document.getElementById(enemies[i].element);
@@ -103,13 +112,55 @@ function checkCollisons(){
             enemies.splice(i, 1); 
             i--;
         }
+        else if(bulletDown.y+bulletDown.h >=480)
+        {
+            bulletDown = createSprite('bulletDown', -2, -120, 2, 50);
+        }
 
+        else if(intersects(bulletDown,enemies[i]))
+        {
+            let element = document.getElementById(enemies[i].element);
+            element.style.visibility = 'hidden';
+            element.parentNode.removeChild(element);
+            enemies.splice(i, 1);
+            i--;
+            bulletDown = createSprite('bulletDown', -2, -120, 2, 50);
+        }
+
+        else if(intersects(bulletLeft,enemies[i]))
+        {
+            let element = document.getElementById(enemies[i].element);
+            element.style.visibility = 'hidden';
+            element.parentNode.removeChild(element);
+            enemies.splice(i, 1);
+            i--;
+            bulletLeft = createSprite('bulletLeft', 2, -100, 50, 2);
+        }
+
+        else if(intersects(bulletRight,enemies[i]))
+        {
+            let element = document.getElementById(enemies[i].element);
+            element.style.visibility = 'hidden';
+            element.parentNode.removeChild(element);
+            enemies.splice(i, 1);
+            i--;
+            bulletRight = createSprite('bulletRight', 2, -100, 50, 2);
+        }
+
+        else if(bulletRight.x+bulletRight.w >=480)
+        {
+            bulletRight = createSprite('bulletRight', 2, -100, 50, 2);
+        }
     }
 }
 
 function showSprites(){
     setPosition(redcube);
-    setPosition(bullet);
+    setPosition(bulletUp);
+
+    setPosition(bulletDown);
+    setPosition(bulletLeft);
+    setPosition(bulletRight);
     for(let i = 0; i < enemies.length; i++){
         setPosition(enemies[i]);
     }
@@ -118,10 +169,16 @@ function showSprites(){
 function updatePositions(){
     for(let i = 0; i < enemies.length; i++){
         enemies[i].y += 4;
-        enemies[i].x += getRandom(7) - 3;
+        //enemies[i].x += getRandom(7) - 3;
         boundsControll(enemies[i], true);
     }
-    bullet.y -=12;
+    bulletUp.y -=1;
+
+    bulletDown.y +=1;
+
+    bulletLeft.x -=1;
+
+    bulletRight.x +=1;
 }
 
 function addEnemy(){
@@ -166,6 +223,9 @@ document.onkeyup = function(evt){
 }
 
 const redcube = createSprite('redcube', 250, 460, 20, 20);
-const bullet = createSprite('bullet', 0, -120, 2, 50);
+const bulletUp = createSprite('bulletUp', 0, -120, 2, 50);
+let bulletDown = createSprite('bulletDown', -2, -120, 2, 50);
+let bulletLeft = createSprite('bulletLeft', 2, -100, 50, 2);
+let bulletRight = createSprite('bulletRight', 2, -100, 50, 2);
 
 loop();
