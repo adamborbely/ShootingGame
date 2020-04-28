@@ -66,28 +66,39 @@ function setPosition(sprite) {
 function handleControls(){
     if(controller.up){
         redcube.y -= movement; 
+        redcube.aim = "up";
     }
     if(controller.down){
         redcube.y += movement;
+        redcube.aim = "down";
     }
     if(controller.right){
         redcube.x += movement; 
+        redcube.aim = "right";
     }
     if(controller.left){
         redcube.x -= movement;
+        redcube.aim = "left";
     }
-    if(controller.space && bulletUp.y <= -120 ){
-        bulletUp.x = redcube.x + 9;
-        bulletUp.y = redcube.y - bulletUp.h;
+    if(controller.space){
+        if(redcube.aim === "up" && bulletUp.y <= -120){
+            bulletUp.x = redcube.x + 9;
+            bulletUp.y = redcube.y - bulletUp.h;
+        }
+        else if(redcube.aim === "down" && !(bulletDown.y <= 480 && bulletDown.y>=20 && bulletDown.x>0)){
+            bulletDown.x = redcube.x + 9;
+            bulletDown.y = redcube.y + 20;
+        }
 
-        bulletDown.x = redcube.x + 9;
-        bulletDown.y = redcube.y + 20;
+        else if(redcube.aim === "left" && (bulletLeft.x<=-20)){
+            bulletLeft.x = redcube.x - bulletLeft.w;
+            bulletLeft.y = redcube.y + 9;
+        }
 
-        bulletLeft.x = redcube.x - bulletLeft.w;
-        bulletLeft.y = redcube.y + 9;
-
-        bulletRight.x = redcube.x + 20;
-        bulletRight.y = redcube.y + 9;
+        else if(redcube.aim === "right" && !(bulletRight.x<=480 && bulletRight.x>=20 && bulletRight.y>0)){
+            bulletRight.x = redcube.x + 20;
+            bulletRight.y = redcube.y + 9;
+        }
     }
     boundsControll(redcube);
 }
@@ -172,13 +183,13 @@ function updatePositions(){
         //enemies[i].x += getRandom(7) - 3;
         boundsControll(enemies[i], true);
     }
-    bulletUp.y -=1;
+    bulletUp.y -=12;
 
-    bulletDown.y +=1;
+    bulletDown.y +=12;
 
-    bulletLeft.x -=1;
+    bulletLeft.x -=12;
 
-    bulletRight.x +=1;
+    bulletRight.x +=12;
 }
 
 function addEnemy(){
