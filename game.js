@@ -90,7 +90,7 @@ function handleControls(){
             bulletDown.y = redcube.y + 20;
         }
 
-        else if(redcube.aim === "left" && (bulletLeft.x<=-20)){
+        else if(redcube.aim === "left" && (bulletLeft.x<=20)){
             bulletLeft.x = redcube.x - bulletLeft.w;
             bulletLeft.y = redcube.y + 9;
         }
@@ -123,13 +123,8 @@ function checkCollisons(){
             enemies.splice(i, 1); 
             i--;
         }
-        else if(bulletDown.y+bulletDown.h >=480)
-        {
-            bulletDown = createSprite('bulletDown', -2, -120, 2, 50);
-        }
 
-        else if(intersects(bulletDown,enemies[i]))
-        {
+        else if(intersects(bulletDown,enemies[i])){
             let element = document.getElementById(enemies[i].element);
             element.style.visibility = 'hidden';
             element.parentNode.removeChild(element);
@@ -138,18 +133,16 @@ function checkCollisons(){
             bulletDown = createSprite('bulletDown', -2, -120, 2, 50);
         }
 
-        else if(intersects(bulletLeft,enemies[i]))
-        {
+        else if(intersects(bulletLeft,enemies[i])){
             let element = document.getElementById(enemies[i].element);
             element.style.visibility = 'hidden';
             element.parentNode.removeChild(element);
             enemies.splice(i, 1);
             i--;
-            bulletLeft = createSprite('bulletLeft', 2, -100, 50, 2);
+            bulletLeft = createSprite('bulletLeft', 60, -100, 50, 2);
         }
 
-        else if(intersects(bulletRight,enemies[i]))
-        {
+        else if(intersects(bulletRight,enemies[i])){
             let element = document.getElementById(enemies[i].element);
             element.style.visibility = 'hidden';
             element.parentNode.removeChild(element);
@@ -157,21 +150,31 @@ function checkCollisons(){
             i--;
             bulletRight = createSprite('bulletRight', 2, -100, 50, 2);
         }
+    }
+    if(bulletDown.y+bulletDown.h >=480){
+        bulletDown = createSprite('bulletDown', -2, -120, 2, 50);
+    }
 
-        else if(bulletRight.x+bulletRight.w >=480)
-        {
-            bulletRight = createSprite('bulletRight', 2, -100, 50, 2);
-        }
+    if(bulletRight.x+bulletRight.w >=480){
+        bulletRight = createSprite('bulletRight', 2, -100, 50, 2);
+    }
+
+    if(bulletUp.y < 20){
+        bulletUp = createSprite('bulletUp', 0, -120, 2, 50);
+    }
+
+    if(bulletLeft.x <= 20  ){
+        bulletLeft = createSprite('bulletLeft', 60, -100, 50, 2);
     }
 }
 
 function showSprites(){
     setPosition(redcube);
     setPosition(bulletUp);
-
     setPosition(bulletDown);
     setPosition(bulletLeft);
     setPosition(bulletRight);
+
     for(let i = 0; i < enemies.length; i++){
         setPosition(enemies[i]);
     }
@@ -179,8 +182,8 @@ function showSprites(){
 
 function updatePositions(){
     for(let i = 0; i < enemies.length; i++){
-        enemies[i].y += 4;
-        //enemies[i].x += getRandom(7) - 3;
+        enemies[i].y += 3;
+        enemies[i].x += getRandom(7)-3;
         boundsControll(enemies[i], true);
     }
     bulletUp.y -=12;
@@ -234,9 +237,9 @@ document.onkeyup = function(evt){
 }
 
 const redcube = createSprite('redcube', 250, 460, 20, 20);
-const bulletUp = createSprite('bulletUp', 0, -120, 2, 50);
+let bulletUp = createSprite('bulletUp', 0, -120, 2, 50);
 let bulletDown = createSprite('bulletDown', -2, -120, 2, 50);
-let bulletLeft = createSprite('bulletLeft', 2, -100, 50, 2);
+let bulletLeft = createSprite('bulletLeft', 60, -100, 50, 2);
 let bulletRight = createSprite('bulletRight', 2, -100, 50, 2);
 
 loop();
