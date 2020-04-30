@@ -4,6 +4,7 @@ const rightButton = 68; // D
 const downButton = 83; // S
 const space = 32; // space
 const movement = 4;
+let gameIsOn = true;
 
 let lastLoopRun = 0;
 
@@ -87,23 +88,54 @@ function handleControls(){
         if(redcube.aim === "up" && bulletUp.y <= -120){
             bulletUp.x = redcube.x + 9;
             bulletUp.y = redcube.y - bulletUp.h;
-        }
-        else if(redcube.aim === "down" && !(bulletDown.y <= 480 && bulletDown.y>=20 && bulletDown.x>0)){
+        }else if(redcube.aim === "down" && !(bulletDown.y <= 480 && bulletDown.y >= 20 && bulletDown.x > 0)){
             bulletDown.x = redcube.x + 9;
             bulletDown.y = redcube.y + 20;
-        }
-
-        else if(redcube.aim === "left" && (bulletLeft.x<=20)){
+        }else if(redcube.aim === "left" && (bulletLeft.y === -100)){
             bulletLeft.x = redcube.x - bulletLeft.w;
             bulletLeft.y = redcube.y + 9;
-        }
-
-        else if(redcube.aim === "right" && !(bulletRight.x<=480 && bulletRight.x>=20 && bulletRight.y>0)){
+        }else if(redcube.aim === "right" && !(bulletRight.x <= 480 && bulletRight.x >= 20 && bulletRight.y > 0)){
             bulletRight.x = redcube.x + 20;
             bulletRight.y = redcube.y + 9;
         }
     }
     boundsControll(redcube);
+}
+
+function gameOver(){
+    element=document.getElementById("gameOver");
+    element.style.visibility = "visible";
+
+    gameIsOn = false;
+
+    for(let i = 0; i < enemies.length; i++){
+        let element = document.getElementById(enemies[i].element);
+        element.style.visibility = 'hidden';
+        element.parentNode.removeChild(element);
+        enemies.splice(i, 1); 
+        i--;
+    }
+
+    let restart = document.getElementById("button");
+    restart.addEventListener("click", restartGame)
+}
+
+function restartGame(){
+    score = 0;
+    roundCount = 0;
+
+    let restart = document.getElementById("button");
+    restart.removeEventListener("click", restartGame);
+
+    let gameOverSign = document.getElementById("gameOver");
+    gameOverSign.style.visibility = "hidden";
+
+    let player = document.getElementById(redcube.element);
+    player.style.visibility = 'visible';
+
+    gameIsOn = true;
+
+    loop();
 }
 
 function checkCollisons(){
@@ -115,64 +147,52 @@ function checkCollisons(){
             enemies.splice(i, 1);
             i--;
             bulletUp.y = -bulletUp.h;
-            score+=50;
-        }
-        else if(intersects(redcube,enemies[i])){
+            score += 50;
+        }else if(intersects(redcube,enemies[i])){
             let element = document.getElementById(redcube.element);
             element.style.visibility = 'hidden';
-            element=document.getElementById("gameOver");
-            element.style.visibility = "visible";
-        }
-        else if(enemies[i].y + enemies[i].h >= 480){
+            gameOver();
+        }else if(enemies[i].y + enemies[i].h >= 480){
             let element = document.getElementById(enemies[i].element);
             element.style.visibility = 'hidden';
             element.parentNode.removeChild(element);
             enemies.splice(i, 1); 
             i--;
-        }
-
-        else if(intersects(bulletDown,enemies[i])){
+        }else if(intersects(bulletDown , enemies[i])){
             let element = document.getElementById(enemies[i].element);
             element.style.visibility = 'hidden';
             element.parentNode.removeChild(element);
             enemies.splice(i, 1);
             i--;
             bulletDown = createSprite('bulletDown', -2, -120, 2, 50);
-            score+=50;
-        }
-
-        else if(intersects(bulletLeft,enemies[i])){
+            score += 50;
+        }else if(intersects(bulletLeft , enemies[i])){
             let element = document.getElementById(enemies[i].element);
             element.style.visibility = 'hidden';
             element.parentNode.removeChild(element);
             enemies.splice(i, 1);
             i--;
             bulletLeft = createSprite('bulletLeft', 60, -100, 50, 2);
-            score+=50;
-        }
-
-        else if(intersects(bulletRight,enemies[i])){
+            score += 50;
+        }else if(intersects(bulletRight,enemies[i])){
             let element = document.getElementById(enemies[i].element);
             element.style.visibility = 'hidden';
             element.parentNode.removeChild(element);
             enemies.splice(i, 1);
             i--;
             bulletRight = createSprite('bulletRight', 2, -100, 50, 2);
-            score+=50;
+            score += 50;
         }
     }
     if(bulletDown.y+bulletDown.h >=480){
         bulletDown = createSprite('bulletDown', -2, -120, 2, 50);
     }
-
     if(bulletRight.x+bulletRight.w >=480){
         bulletRight = createSprite('bulletRight', 2, -100, 50, 2);
     }
-
     if(bulletUp.y < 20){
         bulletUp = createSprite('bulletUp', 0, -120, 2, 50);
     }
-
     if(bulletLeft.x <= 20  ){
         bulletLeft = createSprite('bulletLeft', 60, -100, 50, 2);
     }
@@ -190,7 +210,7 @@ function showSprites(){
     }
 
     let scoreWriting=document.getElementById("score");
-    scoreWriting.textContent="SCORE: "+score;
+    scoreWriting.textContent="SCORE: " + score;
 }
 
 function updatePositions(){
@@ -199,66 +219,40 @@ function updatePositions(){
         enemies[i].x += getRandom(7)-3;
         boundsControll(enemies[i], true);
     }
-    bulletUp.y -=12;
+    bulletUp.y -= 12;
+    bulletDown.y += 12;
+    bulletLeft.x -= 12;
+    bulletRight.x += 12;
+}
 
-    bulletDown.y +=12;
-
-    bulletLeft.x -=12;
-
-    bulletRight.x +=12;
+function createEnemy(){
+    let enemyName ='enemy' + getRandom(10000000);
+    let enemy = createSprite(enemyName, getRandom(450), -40, 35, 35);
+    
+    let element = document.createElement('div');
+    element.id = enemyName;
+    element.className = 'enemy';
+    document.children[0].appendChild(element);
+    
+    enemies[enemies.length] = enemy;
 }
 
 function addEnemy(){
-    if(roundCount>500){
+    if(roundCount > 500){
         if(getRandom(25) == 0){
-            let enemyName ='enemy' + getRandom(10000000);
-            let enemy = createSprite(enemyName, getRandom(450), -40, 35, 35);
-    
-            let element = document.createElement('div');
-            element.id = enemyName;
-            element.className = 'enemy';
-            document.children[0].appendChild(element);
-    
-            enemies[enemies.length] = enemy;
+            createEnemy();
         }
-    }
-    else if(roundCount>1000){
+    }else if(roundCount > 1000){
         if(getRandom(10) == 0){
-            let enemyName ='enemy' + getRandom(10000000);
-            let enemy = createSprite(enemyName, getRandom(450), -40, 35, 35);
-    
-            let element = document.createElement('div');
-            element.id = enemyName;
-            element.className = 'enemy';
-            document.children[0].appendChild(element);
-    
-            enemies[enemies.length] = enemy;
+            createEnemy();
        }
-    }
-    else if(roundCount>2000){
+    }else if(roundCount > 2000){
         if(getRandom(2) == 0){
-            let enemyName ='enemy' + getRandom(10000000);
-            let enemy = createSprite(enemyName, getRandom(450), -40, 35, 35);
-    
-            let element = document.createElement('div');
-            element.id = enemyName;
-            element.className = 'enemy';
-            document.children[0].appendChild(element);
-    
-            enemies[enemies.length] = enemy;
+            createEnemy();
        }
-    }
-    else{
+    }else{
         if(getRandom(50) == 0){
-            let enemyName ='enemy' + getRandom(10000000);
-            let enemy = createSprite(enemyName, getRandom(450), -40, 35, 35);
-    
-            let element = document.createElement('div');
-            element.id = enemyName;
-            element.className = 'enemy';
-            document.children[0].appendChild(element);
-    
-            enemies[enemies.length] = enemy;
+            createEnemy();
         }
     }
 }
@@ -267,22 +261,26 @@ function getRandom(maxSize){
     return parseInt(Math.random()* maxSize);
 }
 
+
 function loop(){
-    if(new Date().getTime() - lastLoopRun > 40){
-        updatePositions();
-        handleControls();
-        checkCollisons();
+    if(gameIsOn){
+        if(new Date().getTime() - lastLoopRun > 40){
+            roundCount++;
+            updatePositions();
+            handleControls();
+            checkCollisons();
 
-        addEnemy();
+            addEnemy();
 
-        showSprites();
+            showSprites();
 
-        lastLoopRun = new Date().getTime();
+            lastLoopRun = new Date().getTime();
+        }
+        
+        setTimeout('loop();', 2);
     }
-    roundCount++;
-    setTimeout('loop();',2);
 }
-
+ 
 document.onkeydown = function(evt){
     toggleKey(evt.keyCode, true);
 }
